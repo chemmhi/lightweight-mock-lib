@@ -7,7 +7,7 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "http://mq.code.sangfor.org/31622/lightweight-mock-lib"
+    "url": "https://github.com/chemmhi/lightweight-mock-lib"
   },
   "keywords": [
     "mockdata",
