@@ -1,9 +1,9 @@
 /* 
-    ## Handler
+    ## handler
 
     处理数据模板。
     
-    * Handler.gen( template, name?, context? )
+    * handler.gen( template, name?, context? )
 
         入口方法。
 
@@ -11,23 +11,23 @@
         
         处理数据模板定义。
 
-        * Handler.array( options )
-        * Handler.object( options )
-        * Handler.number( options )
-        * Handler.boolean( options )
-        * Handler.string( options )
-        * Handler.function( options )
-        * Handler.regexp( options )
+        * handler.array( options )
+        * handler.object( options )
+        * handler.number( options )
+        * handler.boolean( options )
+        * handler.string( options )
+        * handler.function( options )
+        * handler.regexp( options )
         
         处理路径（相对和绝对）。
 
-        * Handler.getValueByKeyPath( key, options )
+        * handler.getValueByKeyPath( key, options )
 
     * Data Placeholder Definition, DPD
 
         处理数据占位符定义
 
-        * Handler.placeholder( placeholder, context, templateContext, options )
+        * handler.placeholder( placeholder, context, templateContext, options )
 
 */
 
@@ -35,29 +35,21 @@ import Constant from './constant';
 import Util from './util';
 import Parser from './parser';
 import Random from '../random';
-import RE from '../regexp';
+import type { TemplateType, ContentOptionType, ContextType } from './type'
 
-var Handler = {
-    extend: Util.extend
-}
+interface Handler {
+    extend: (obj: any) => any,
+    gen: (template: TemplateType<any>, name?: string, context?: ContextType) => TemplateType<any>,
+};
 
-/*
-    template        属性值（即数据模板）
-    name            属性名
-    context         数据上下文，生成后的数据
-    templateContext 模板上下文，
+const handler: Handler = {
+    extend: Util.extend,
 
-    Handle.gen(template, name, options)
-    context
-        currentContext, templateCurrentContext, 
-        path, templatePath
-        root, templateRoot
-*/
-Handler.gen = function(template, name, context) {
-    name = name == undefined ? '' : (name + '')
+    gen(template, name, context) {
+        name = name == undefined ? '' : (name + '')
+        context = context || {} as ContextType;
 
-    context = context || {}
-    context = {
+        context = {
             // 当前访问路径，只有属性名，不包括生成规则
             path: context.path || [Constant.GUID],
             templatePath: context.templatePath || [Constant.GUID++],
@@ -72,51 +64,69 @@ Handler.gen = function(template, name, context) {
         }
         // console.log('path:', context.path.join('.'), template)
 
-    var rule = Parser.parse(name)
-    var type = Util.type(template)
-    var data
+        let rule = Parser.parse()
+        let type = Util.type(template);
+        let data
 
-    if (Handler[type]) {
-        data = Handler[type]({
-            // 属性值类型
-            type: type,
-            // 属性值模板
-            template: template,
-            // 属性名 + 生成规则
-            name: name,
-            // 属性名
-            parsedName: name ? name.replace(Constant.RE_KEY, '$1') : name,
+        // @ts-ignore
+        if (handler[type]) {
+            // @ts-ignore
+            data = handler[type]({
+                // 属性值类型
+                type: type,
+                // 属性值模板
+                template: template,
+                // 属性名 + 生成规则
+                name: '',
+                // 属性名
+                parsedName: '',
 
-            // 解析后的生成规则
-            rule: rule,
-            // 相关上下文
-            context: context
-        })
+                // 解析后的生成规则
+                rule: rule,
+                // 相关上下文
+                context: context
+            })
 
-        if (!context.root) context.root = data
-        return data
-    }
+            if (!context.root) context.root = data
+            return data
+        }
 
-    return template
+        return template
+    },
 }
 
-Handler.extend({
-    array: function(options) {
-        var result = [],
+/*
+    template        属性值（即数据模板）
+    name            属性名
+    context         数据上下文，生成后的数据
+    templateContext 模板上下文，
+
+    Handle.gen(template, name, options)
+    context
+        currentContext, templateCurrentContext, 
+        path, templatePath
+        root, templateRoot
+*/
+
+
+handler.extend({
+    array: function (options: ContentOptionType) {
+        let result: string[] = [],
             i, ii;
 
         // 'name|1': []
         // 'name|count': []
         // 'name|min-max': []
-        if (options.template.length === 0) return result
+        if (options.template['length'] === 0) return result
 
         // 'arr': [{ 'email': '@EMAIL' }, { 'email': '@EMAIL' }]
         if (!options.rule.parameters) {
-            for (i = 0; i < options.template.length; i++) {
+            for (i = 0; i < options.template['length']; i++) {
                 options.context.path.push(i)
                 options.context.templatePath.push(i)
                 result.push(
-                    Handler.gen(options.template[i], i, {
+                    // @ts-ignore
+                    handler.gen(options.template[i], i, {
                         path: options.context.path,
                         templatePath: options.context.templatePath,
                         currentContext: result,
@@ -134,8 +144,9 @@ Handler.extend({
                 // fix #17
                 options.context.path.push(options.name)
                 options.context.templatePath.push(options.name)
+                // @ts-ignore
                 result = Random.pick(
-                    Handler.gen(options.template, undefined, {
+                    handler.gen(options.template, undefined, {
                         path: options.context.path,
                         templatePath: options.context.templatePath,
                         currentContext: result,
@@ -149,11 +160,11 @@ Handler.extend({
             } else {
                 // 'data|+1': [{}, {}]
                 if (options.rule.parameters[2]) {
-                    options.template.__order_index = options.template.__order_index || 0
+                    options.template['__order_index'] = options.template['__order_index'] || 0
 
                     options.context.path.push(options.name)
                     options.context.templatePath.push(options.name)
-                    result = Handler.gen(options.template, undefined, {
+                    result = handler.gen(options.template, undefined, {
                         path: options.context.path,
                         templatePath: options.context.templatePath,
                         currentContext: result,
@@ -161,10 +172,10 @@ Handler.extend({
                         root: options.context.root || result,
                         templateRoot: options.context.templateRoot || options.template
                     })[
-                        options.template.__order_index % options.template.length
+                        options.template['__order_index'] % options.template['length']
                     ]
 
-                    options.template.__order_index += +options.rule.parameters[2]
+                    options.template['__order_index'] += +options.rule.parameters[2]
 
                     options.context.path.pop()
                     options.context.templatePath.pop()
@@ -173,11 +184,12 @@ Handler.extend({
                     // 'data|1-10': [{}]
                     for (i = 0; i < options.rule.count; i++) {
                         // 'data|1-10': [{}, {}]
-                        for (ii = 0; ii < options.template.length; ii++) {
+                        for (ii = 0; ii < options.template['length']; ii++) {
                             options.context.path.push(result.length)
                             options.context.templatePath.push(ii)
                             result.push(
-                                Handler.gen(options.template[ii], result.length, {
+                                // @ts-ignore
+                                handler.gen(options.template[ii], result.length, {
                                     path: options.context.path,
                                     templatePath: options.context.templatePath,
                                     currentContext: result,
@@ -196,21 +208,23 @@ Handler.extend({
         return result
     },
 
-    object: function(options) {
-        var result = {},
-            keys, fnKeys, key, parsedKey, inc, i;
+    object: function (options: ContentOptionType) {
+        let result = {},
+            keys: string[], fnKeys: string[], key: string, parsedKey: string, inc, i;
 
         // 'obj|min-max': {}
         if (options.rule.min != undefined) {
             keys = Util.keys(options.template)
+            // @ts-ignore
             keys = Random.shuffle(keys)
             keys = keys.slice(0, options.rule.count)
             for (i = 0; i < keys.length; i++) {
-                key = keys[i]
+                key = keys[i] as string;
                 parsedKey = key.replace(Constant.RE_KEY, '$1')
                 options.context.path.push(parsedKey)
                 options.context.templatePath.push(key)
-                result[parsedKey] = Handler.gen(options.template[key], key, {
+                // @ts-ignore
+                result[parsedKey] = handler.gen(options.template[key], key, {
                     path: options.context.path,
                     templatePath: options.context.templatePath,
                     currentContext: result,
@@ -235,8 +249,8 @@ Handler.extend({
                 会改变非函数属性的顺序
                 keys = Util.keys(options.template)
                 keys.sort(function(a, b) {
-                    var afn = typeof options.template[a] === 'function'
-                    var bfn = typeof options.template[b] === 'function'
+                    let afn = typeof options.template[a] === 'function'
+                    let bfn = typeof options.template[b] === 'function'
                     if (afn === bfn) return 0
                     if (afn && !bfn) return 1
                     if (!afn && bfn) return -1
@@ -244,11 +258,12 @@ Handler.extend({
             */
 
             for (i = 0; i < keys.length; i++) {
-                key = keys[i]
+                key = keys[i] as string;
                 parsedKey = key.replace(Constant.RE_KEY, '$1')
                 options.context.path.push(parsedKey)
                 options.context.templatePath.push(key)
-                result[parsedKey] = Handler.gen(options.template[key], key, {
+                // @ts-ignore
+                result[parsedKey] = handler.gen(options.template[key], key, {
                     path: options.context.path,
                     templatePath: options.context.templatePath,
                     currentContext: result,
@@ -258,7 +273,7 @@ Handler.extend({
                 })
                 options.context.path.pop()
                 options.context.templatePath.pop()
-                    // 'id|+1': 1
+                // 'id|+1': 1
                 inc = key.match(Constant.RE_KEY)
                 if (inc && inc[2] && Util.type(options.template[key]) === 'number') {
                     options.template[key] += parseInt(inc[2], 10)
@@ -267,23 +282,27 @@ Handler.extend({
         }
         return result
     },
-    number: function(options) {
-        var result, parts;
+    number: function (options: ContentOptionType) {
+        let result, parts;
         if (options.rule.decimal) { // float
+            // @ts-ignore
             options.template += ''
-            parts = options.template.split('.')
-                // 'float1|.1-10': 10,
-                // 'float2|1-100.1-10': 1,
-                // 'float3|999.1-10': 1,
-                // 'float4|.3-10': 123.123,
+            parts = options.template['split']('.')
+            // 'float1|.1-10': 10,
+            // 'float2|1-100.1-10': 1,
+            // 'float3|999.1-10': 1,
+            // 'float4|.3-10': 123.123,
             parts[0] = options.rule.range ? options.rule.count : parts[0]
             parts[1] = (parts[1] || '').slice(0, options.rule.dcount)
             while (parts[1].length < options.rule.dcount) {
                 parts[1] += (
                     // 最后一位不能为 0：如果最后一位为 0，会被 JS 引擎忽略掉。
+                    // @ts-ignore
                     (parts[1].length < options.rule.dcount - 1) ? Random.character('number') : Random.character('123456789')
                 )
             }
+            
+            // @ts-ignore
             result = parseFloat(parts.join('.'), 10)
         } else { // integer
             // 'grade1|1-100': 1,
@@ -291,17 +310,18 @@ Handler.extend({
         }
         return result
     },
-    boolean: function(options) {
-        var result;
+    boolean: function (options: ContentOptionType) {
+        let result;
         // 'prop|multiple': false, 当前值是相反值的概率倍数
         // 'prop|probability-probability': false, 当前值与相反值的概率
+        // @ts-ignore
         result = options.rule.parameters ? Random.bool(options.rule.min, options.rule.max, options.template) : options.template
         return result
     },
-    string: function(options) {
-        var result = '',
+    string: function (options: ContentOptionType) {
+        let result = '',
             i, placeholders, ph, phed;
-        if (options.template.length) {
+        if (options.template['length']) {
 
             //  'foo': '★',
             if (options.rule.count == undefined) {
@@ -318,81 +338,50 @@ Handler.extend({
                 ph = placeholders[i]
 
                 // 遇到转义斜杠，不需要解析占位符
-                if (/^\\/.test(ph)) {
+                if (/^\\/.test(ph as string)) {
                     placeholders.splice(i--, 1)
                     continue
                 }
-
-                phed = Handler.placeholder(ph, options.context.currentContext, options.context.templateCurrentContext, options)
+                // @ts-ignore
+                phed = handler.placeholder(ph, options.context.currentContext, options.context.templateCurrentContext, options)
 
                 // 只有一个占位符，并且没有其他字符
                 if (placeholders.length === 1 && ph === result && typeof phed !== typeof result) { // 
                     result = phed
                     break
-
-                    if (Util.isNumeric(phed)) {
-                        result = parseFloat(phed, 10)
-                        break
-                    }
-                    if (/^(true|false)$/.test(phed)) {
-                        result = phed === 'true' ? true :
-                            phed === 'false' ? false :
-                            phed // 已经是布尔值
-                        break
-                    }
                 }
-                result = result.replace(ph, phed)
+                result = result.replace(ph as string, phed)
             }
 
         } else {
             // 'ASCII|1-10': '',
             // 'ASCII': '',
+            // @ts-ignore
             result = options.rule.range ? Random.string(options.rule.count) : options.template
         }
         return result
     },
-    'function': function(options) {
-        // ( context, options )
-        return options.template.call(options.context.currentContext, options)
-    },
-    'regexp': function(options) {
-        var source = ''
-
-        // 'name': /regexp/,
-        if (options.rule.count == undefined) {
-            source += options.template.source // regexp.source
-        }
-
-        // 'name|1-5': /regexp/,
-        for (var i = 0; i < options.rule.count; i++) {
-            source += options.template.source
-        }
-
-        return RE.Handler.gen(
-            RE.Parser.parse(
-                source
-            )
-        )
-    }
 })
 
-Handler.extend({
-    _all: function() {
-        var re = {};
-        for (var key in Random) re[key.toLowerCase()] = key
+handler.extend({
+    _all: function () {
+        let re = {};
+        // @ts-ignore
+        for (let key in Random) re[key.toLowerCase()] = key
         return re
     },
     // 处理占位符，转换为最终值
-    placeholder: function(placeholder, obj, templateContext, options) {
+    // @ts-ignore
+    placeholder: function (placeholder: string, obj, templateContext, options) {
         // console.log(options.context.path)
         // 1 key, 2 params
         Constant.RE_PLACEHOLDER.exec('')
-        var parts = Constant.RE_PLACEHOLDER.exec(placeholder),
+        let parts = Constant.RE_PLACEHOLDER.exec(placeholder),
             key = parts && parts[1],
             lkey = key && key.toLowerCase(),
-            okey = this._all()[lkey],
+            okey = this._all()[lkey as string],
             params = parts && parts[2] || ''
-        var pathParts = this.splitPathToArray(key)
+        let pathParts = this.splitPathToArray(key)
 
         // 解析占位符的参数
         try {
@@ -403,11 +392,12 @@ Handler.extend({
             // console.error(error)
             // if (error instanceof ReferenceError) params = parts[2].split(/,\s*/);
             // else throw error
+            // @ts-ignore
             params = parts[2].split(/,\s*/)
         }
 
         // 占位符优先引用数据模板中的属性
-        if (obj && (key in obj)) return obj[key]
+        if (obj && (key as string in obj)) return obj[key as string]
 
         // @index @key
         // if (Constant.RE_INDEX.test(key)) return +options.name
@@ -415,53 +405,57 @@ Handler.extend({
 
         // 绝对路径 or 相对路径
         if (
-            key.charAt(0) === '/' ||
+            (key as string).charAt(0) === '/' ||
             pathParts.length > 1
         ) return this.getValueByKeyPath(key, options)
 
         // 递归引用数据模板中的属性
         if (templateContext &&
             (typeof templateContext === 'object') &&
-            (key in templateContext) &&
-            (placeholder !== templateContext[key]) // fix #15 避免自己依赖自己
+            ((key as string) in templateContext) &&
+            (placeholder !== templateContext[(key as string)]) // fix #15 避免自己依赖自己
         ) {
             // 先计算被引用的属性值
-            templateContext[key] = Handler.gen(templateContext[key], key, {
+            // @ts-ignore
+            templateContext[key] = handler.gen(templateContext[key], key, {
                 currentContext: obj,
                 templateCurrentContext: templateContext
             })
-            return templateContext[key]
+            return templateContext[(key as string)]
         }
 
         // 如果未找到，则原样返回
-        if (!(key in Random) && !(lkey in Random) && !(okey in Random)) return placeholder
+        if (!((key as string) in Random) && !(lkey as string in Random) && !(okey in Random)) return placeholder
 
         // 递归解析参数中的占位符
-        for (var i = 0; i < params.length; i++) {
+        for (let i = 0; i < params.length; i++) {
             Constant.RE_PLACEHOLDER.exec('')
-            if (Constant.RE_PLACEHOLDER.test(params[i])) {
-                params[i] = Handler.placeholder(params[i], obj, templateContext, options)
+            if (Constant.RE_PLACEHOLDER.test(params[i] as string)) {
+                // @ts-ignore
+                params[i] = handler.placeholder(params[i], obj, templateContext, options)
             }
         }
 
-        var handle = Random[key] || Random[lkey] || Random[okey]
+        // @ts-ignore
+        let handle = Random[key] || Random[lkey] || Random[okey]
         switch (Util.type(handle)) {
             case 'array':
                 // 自动从数组中取一个，例如 @areas
+                // @ts-ignore
                 return Random.pick(handle)
             case 'function':
                 // 执行占位符方法（大多数情况）
                 handle.options = options
-                var re = handle.apply(Random, params)
+                let re = handle.apply(Random, params)
                 if (re === undefined) re = '' // 因为是在字符串中，所以默认为空字符串。
                 delete handle.options
                 return re
         }
     },
-    getValueByKeyPath: function(key, options) {
-        var originalKey = key
-        var keyPathParts = this.splitPathToArray(key)
-        var absolutePathParts = []
+    getValueByKeyPath: function (key: string, options: ContentOptionType) {
+        let originalKey = key
+        let keyPathParts = this.splitPathToArray(key)
+        let absolutePathParts = []
 
         // 绝对路径
         if (key.charAt(0) === '/') {
@@ -482,15 +476,15 @@ Handler.extend({
 
         try {
             key = keyPathParts[keyPathParts.length - 1]
-            var currentContext = options.context.root
-            var templateCurrentContext = options.context.templateRoot
-            for (var i = 1; i < absolutePathParts.length - 1; i++) {
+            let currentContext = options.context.root
+            let templateCurrentContext = options.context.templateRoot
+            for (let i = 1; i < absolutePathParts.length - 1; i++) {
                 currentContext = currentContext[absolutePathParts[i]]
                 templateCurrentContext = templateCurrentContext[absolutePathParts[i]]
             }
             // 引用的值已经计算好
             if (currentContext && (key in currentContext)) return currentContext[key]
-    
+
             // 尚未计算，递归引用数据模板中的属性
             if (templateCurrentContext &&
                 (typeof templateCurrentContext === 'object') &&
@@ -498,20 +492,21 @@ Handler.extend({
                 (originalKey !== templateCurrentContext[key]) // fix #15 避免自己依赖自己
             ) {
                 // 先计算被引用的属性值
-                templateCurrentContext[key] = Handler.gen(templateCurrentContext[key], key, {
+                // @ts-ignore
+                templateCurrentContext[key] = handler.gen(templateCurrentContext[key], key, {
                     currentContext: currentContext,
                     templateCurrentContext: templateCurrentContext
                 })
                 return templateCurrentContext[key]
             }
-        } catch(err) { }
+        } catch (err) { }
 
         return '@' + keyPathParts.join('/')
     },
 
-    normalizePath: function(pathParts) {
-        var newPathParts = []
-        for (var i = 0; i < pathParts.length; i++) {
+    normalizePath: function (pathParts: string[]) {
+        let newPathParts = []
+        for (let i = 0; i < pathParts.length; i++) {
             switch (pathParts[i]) {
                 case '..':
                     newPathParts.pop()
@@ -524,12 +519,12 @@ Handler.extend({
         }
         return newPathParts
     },
-    splitPathToArray: function(path) {
-        var parts = path.split(/\/+/);
+    splitPathToArray: function (path: string): string[] {
+        let parts = path.split(/\/+/);
         if (!parts[parts.length - 1]) parts = parts.slice(0, -1)
         if (!parts[0]) parts = parts.slice(1)
         return parts;
     }
 })
 
-module.exports = Handler
+export default handler

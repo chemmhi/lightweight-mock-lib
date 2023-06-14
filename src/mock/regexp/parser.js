@@ -1,4 +1,3 @@
-// https://github.com/nuysoft/regexp
 // forked from https://github.com/ForbesLindesay/regexp
 
 function parse(n) {

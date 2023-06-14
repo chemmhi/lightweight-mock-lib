@@ -1,4 +1,4 @@
-interface PatternLetters {
+export interface PatternLetters {
     [key: string]: string | ((date: Date) => string);
 }
 
@@ -47,40 +47,40 @@ const patternLetters: PatternLetters = {
 };
 
 export default {
-    _patternLetters: patternLetters,
-    _rformat: new RegExp((function () {
+    patternLetters: patternLetters,
+    rformat: new RegExp((function () {
         const re = Object.keys(patternLetters);
         return '(' + re.join('|') + ')';
     })(), 'g'),
-    _formatDate(date: Date, format: string): string {
-        return format.replace(this._rformat, (_substring: string, flag: string) => {
+    formatDate(date: Date, format: string): string {
+        return format.replace(this.rformat, (_substring: string, flag: string) => {
 
             return typeof patternLetters[flag] === 'function'
                 // @ts-ignore
                 ? patternLetters[flag](date)
                 // @ts-ignore
                 : patternLetters[flag] in patternLetters
-                    ? this._formatDate(date, patternLetters[flag] as string)
+                    ? this.formatDate(date, patternLetters[flag] as string)
                     // @ts-ignore
                     : (date as any)[patternLetters[flag]]();
         });
     },
-    _randomDate(min?: Date, max?: Date): Date {
+    randomDate(min?: Date, max?: Date): Date {
         min = min === undefined ? new Date(0) : min;
         max = max === undefined ? new Date() : max;
         return new Date(Math.random() * (max.getTime() - min.getTime()));
     },
     date(format?: string): string {
         format = format || 'yyyy-MM-dd';
-        return this._formatDate(this._randomDate(), format);
+        return this.formatDate(this.randomDate(), format);
     },
     time(format?: string): string {
         format = format || 'HH:mm:ss';
-        return this._formatDate(this._randomDate(), format);
+        return this.formatDate(this.randomDate(), format);
     },
     datetime(format?: string): string {
         format = format || 'yyyy-MM-dd HH:mm:ss';
-        return this._formatDate(this._randomDate(), format);
+        return this.formatDate(this.randomDate(), format);
     },
     now(unit?: string, format?: string): string {
         if (arguments.length === 1) {
@@ -128,6 +128,6 @@ export default {
                 date.setDate(date.getDate() - date.getDay());
         }
 
-        return this._formatDate(date, format);
+        return this.formatDate(date, format);
     },
 };

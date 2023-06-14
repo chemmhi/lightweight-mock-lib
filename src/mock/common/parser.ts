@@ -43,31 +43,38 @@ interface Parser {
 
 const Parser: Parser = {
 	parse(name = ""): Result {
-		const parameters = (name || "").match(Constant.RE_KEY);
+		const parameters = name.match(Constant.RE_KEY);
 
 		const range = parameters && parameters[3] && parameters[3].match(Constant.RE_RANGE);
 		const min = range && range[1] && parseInt(range[1], 10);
 		const max = range && range[2] && parseInt(range[2], 10);
+		// @ts-ignore
 		const count = range ? (!range[2] ? parseInt(range[1], 10) : Random.integer(min, max)) : undefined;
 
 		const decimal = parameters && parameters[4] && parameters[4].match(Constant.RE_RANGE);
 		const dmin = decimal && decimal[1] && parseInt(decimal[1], 10);
 		const dmax = decimal && decimal[2] && parseInt(decimal[2], 10);
+		// @ts-ignore
 		const dcount = decimal ? (!decimal[2] ? parseInt(decimal[1], 10) : Random.integer(dmin, dmax)) : undefined;
 
 		const result: Result = {
-			parameters,
-			range,
-			min,
-			max,
-			count,
-			decimal,
-			dmin,
-			dmax,
-			dcount,
+			parameters: parameters as RegExpMatchArray,
+			// 1 min, 2 max
+			range: range as RegExpMatchArray,
+			min: min as number,
+			max: max as number,
+			// min-max
+			count: count,
+			// 是否有 decimal
+			decimal: decimal  as RegExpMatchArray,
+			dmin: dmin as number,
+			dmax: dmax as number,
+			// dmin-dimax
+			dcount: dcount
 		};
 
 		for (const r in result) {
+			// @ts-ignore
 			if (result[r] !== undefined) return result;
 		}
 

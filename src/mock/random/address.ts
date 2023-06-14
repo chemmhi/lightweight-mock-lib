@@ -1,7 +1,7 @@
 import DICT from "./address_dict";
 import type { DictItem } from './address_dict';
 
-interface AddressInterface {
+export interface AddressInterface {
     region: () => string;
     province: () => string;
     city: (prefix?: boolean) => string;
