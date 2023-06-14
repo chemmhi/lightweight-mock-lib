@@ -2,7 +2,7 @@
     ## Helpers
 */
 
-var Util = require('../util')
+var Util = require('../common/util')
 
 module.exports = {
 	// 把字符串的第一个字母转换为大写。
