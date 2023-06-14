@@ -27,35 +27,35 @@ export interface Basics {
 
 const basics: Basics = {
   // 返回一个随机的布尔值。
-  boolean(min = 1, max = 1, cur = false): boolean {
+  boolean(min?: number, max?: number, cur = false): boolean {
     if (cur !== undefined) {
-      min = typeof min !== 'undefined' && !isNaN(min) ? parseInt(min.toString(), 10) : 1;
-      max = typeof max !== 'undefined' && !isNaN(max) ? parseInt(max.toString(), 10) : 1;
+      min = typeof min !== 'undefined' && !isNaN(min) ? parseInt(min + '', 10) : 1;
+      max = typeof max !== 'undefined' && !isNaN(max) ? parseInt(max + '', 10) : 1;
       return Math.random() > 1.0 / (min + max) * min ? !cur : cur;
     }
 
     return Math.random() >= 0.5;
   },
-  bool(min = 1, max = 1, cur = false): boolean {
+  bool(min?: number, max?: number, cur = false): boolean {
     return this.boolean(min, max, cur);
   },
   // 返回一个随机的自然数（大于等于 0 的整数）。
-  natural(min = 0, max = 9007199254740992): number {
-    min = typeof min !== 'undefined' ? parseInt(min.toString(), 10) : 0;
-    max = typeof max !== 'undefined' ? parseInt(max.toString(), 10) : 9007199254740992; // 2^53
-    return Math.round(Math.random() * (max - min)) + min;
+  natural: function (min?: number, max?: number) {
+    min = typeof min !== 'undefined' ? min : 0
+    max = typeof max !== 'undefined' ? max : 9007199254740992 // 2^53
+    return Math.round(Math.random() * (max - min)) + min
   },
   // 返回一个随机的整数。
-  integer(min = -9007199254740992, max = 9007199254740992): number {
-    min = typeof min !== 'undefined' ? parseInt(min.toString(), 10) : -9007199254740992;
-    max = typeof max !== 'undefined' ? parseInt(max.toString(), 10) : 9007199254740992; // 2^53
+  integer(min?: number, max?: number): number {
+    min = typeof min !== 'undefined' ? parseInt(min + '', 10) : -9007199254740992;
+    max = typeof max !== 'undefined' ? parseInt(max + '', 10) : 9007199254740992; // 2^53
     return Math.round(Math.random() * (max - min)) + min;
   },
-  int(min = -9007199254740992, max = 9007199254740992): number {
+  int(min?: number, max?: number): number {
     return this.integer(min, max);
   },
   // 返回一个随机的浮点数。
-  float(min = 0, max = 1, dmin = 0, dmax = 17): number {
+  float(min?: number, max?: number, dmin?: number, dmax?: number): number {
     dmin = dmin === undefined ? 0 : dmin;
     dmin = Math.max(Math.min(dmin, 17), 0);
     dmax = dmax === undefined ? 17 : dmax;
@@ -93,7 +93,7 @@ const basics: Basics = {
     return this.character(pool);
   },
   // 返回一个随机字符串。
-  string(pool: keyof Pools | number = 7, min?: number, max?: number): string {
+  string(pool?: keyof Pools, min?: number, max?: number): string {
     let len: number;
     switch (arguments.length) {
       case 0: // ()
@@ -107,19 +107,18 @@ const basics: Basics = {
         break;
       case 2:
         // ( pool, length )
-        if (typeof pool === 'string') {
-          len = min || 0;
+        if (typeof arguments[0] === 'string') {
+          len = min as number;
         } else {
           // ( min, max )
-          len = this.natural(pool, min || 0);
-
           // @ts-ignore
-          pool = undefined;
+          len = this.natural(pool, min)
+          pool = undefined
         }
         break;
       case 3:
-        len = this.natural(min || 0, max || 0);
-        break;
+        len = this.natural(min, max)
+        break
     }
 
     let text = '';

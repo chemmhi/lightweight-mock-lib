@@ -1,3 +1,4 @@
+import DICT from './address_dict';
 export interface Miscellaneous {
 	d4(): number;
 	d6(): number;
@@ -47,19 +48,18 @@ const miscellaneous: Miscellaneous = {
 		return this.guid();
 	},
 	id: function (): string {
-		const sum = 0;
-		const rank = [
+		let sum = 0;
+		let rank = [
 			'7', '9', '10', '5', '8', '4', '2', '1', '6', '3', '7', '9', '10', '5', '8', '4', '2'
 		];
-		const last = [
+		let last = [
 			'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'
 		];
 		// @ts-ignore
 		let id = this.pick(DICT).id + this.date('yyyyMMdd') + this.string('number', 3);
 
 		for (let i = 0; i < id.length; i++) {
-			// @ts-ignore
-			sum += parseInt(id[i], 10) * parseInt(rank[i], 10);
+			sum += id[i] * parseInt(rank[i] as string, 10);
 		}
 		id += last[sum % 11];
 

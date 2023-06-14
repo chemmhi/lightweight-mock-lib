@@ -119,9 +119,6 @@ export default {
                 date.setSeconds(0);
             case 'second':
                 date.setMilliseconds(0);
-                break;
-            default:
-                throw new Error('Unknown unit');
         }
         switch (unit) {
             case 'week':

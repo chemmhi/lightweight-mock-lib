@@ -17,7 +17,7 @@ export default {
   },
 
   // 从数组中随机选取一个元素，并返回。
-  pick: function <T>(arr: T[], min = 1, max = 1): T | T[] {
+  pick: function <T>(arr: T[], min: number, max: number): T | T[] {
     if (!Util.isArray(arr)) {
       arr = [].slice.call(arguments)
       min = 1
@@ -36,6 +36,7 @@ export default {
     }
     return this.shuffle(arr, min, max);
   },
+
   // @ts-ignore
   shuffle: function <T>(arr: T[], min?: number, max?: number): T[] {
     arr = arr || []
