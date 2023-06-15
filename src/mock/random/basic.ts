@@ -41,8 +41,10 @@ const basics: Basics = {
   },
   // 返回一个随机的自然数（大于等于 0 的整数）。
   natural: function (min?: number, max?: number) {
-    min = typeof min !== 'undefined' ? min : 0
-    max = typeof max !== 'undefined' ? max : 9007199254740992 // 2^53
+    // @ts-ignore
+    min = typeof min !== 'undefined' ? parseInt(min, 10) : 0
+    // @ts-ignore
+    max = typeof max !== 'undefined' ? parseInt(min, 10) : 9007199254740992 // 2^53
     return Math.round(Math.random() * (max - min)) + min
   },
   // 返回一个随机的整数。

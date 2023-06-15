@@ -58,7 +58,7 @@ console.log(Random.email()) // 'x.qdips@wivrxii.bw'
 ### Mock
 
 ```ts
-import { Mock } from 'lightweight-mock-lib'
+import Mock from 'lightweight-mock-lib'
 
 console.log(
   Mock.mock({
