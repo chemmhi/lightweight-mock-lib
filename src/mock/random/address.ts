@@ -8,7 +8,7 @@ export interface AddressInterface {
     county: (prefix?: boolean) => string;
     zip: (len?: number) => string;
     pick: <T>(arr: T[]) => T;
-    natural: (min: number, max: number) => number;
+    _natural: (min: number, max: number) => number;
 }
 
 const Address: AddressInterface = {
@@ -44,17 +44,17 @@ const Address: AddressInterface = {
     // 随机生成一个邮政编码（六位数字）。
     zip(len?: number) {
         let zip = "";
-        for (let i = 0; i < (len || 6); i++) zip += this.natural(0, 9);
+        for (let i = 0; i < (len || 6); i++) zip += this._natural(0, 9);
         return zip;
     },
 
     // 从数组中随机选取一个元素，并返回。
     pick<T>(arr: T[]): T {
-        return arr[this.natural(0, arr.length - 1)] as T;
+        return arr[this._natural(0, arr.length - 1)] as T;
     },
 
     // 生成一个随机数，范围是[min, max]。
-    natural(min: number, max: number): number {
+    _natural(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
 
