@@ -44,7 +44,7 @@ const basics: Basics = {
     // @ts-ignore
     min = typeof min !== 'undefined' ? parseInt(min, 10) : 0
     // @ts-ignore
-    max = typeof max !== 'undefined' ? parseInt(min, 10) : 9007199254740992 // 2^53
+    max = typeof max !== 'undefined' ? parseInt(max, 10) : 9007199254740992 // 2^53
     return Math.round(Math.random() * (max - min)) + min
   },
   // 返回一个随机的整数。
