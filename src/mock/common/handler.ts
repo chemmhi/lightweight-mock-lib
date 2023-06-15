@@ -64,7 +64,7 @@ const handler: Handler = {
         }
         // console.log('path:', context.path.join('.'), template)
 
-        let rule = Parser.parse()
+        let rule = Parser.parse(name)
         let type = Util.type(template);
         let data
 
@@ -77,9 +77,9 @@ const handler: Handler = {
                 // 属性值模板
                 template: template,
                 // 属性名 + 生成规则
-                name: '',
+                name: name,
                 // 属性名
-                parsedName: '',
+                parsedName: name ? name.replace(Constant.RE_KEY, '$1') : name,
 
                 // 解析后的生成规则
                 rule: rule,
