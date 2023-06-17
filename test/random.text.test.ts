@@ -113,6 +113,20 @@ describe('Random', () => {
             }
         });
 
+        doit('Random.cword("民企第一李白")', (data) => {
+            expect(data).toBeTruthy();
+            for (let cha of data) {
+                expect("民企第一李白".includes(cha)).toBe(true);
+            }
+        });
+
+        doit('Random.cword("民企第一李白", 2)', (data) => {
+            expect(data).toBeTruthy();
+            for (let cha of data) {
+                expect("民企第一李白".includes(cha)).toBe(true);
+            }
+        });
+
         doit('Random.ctitle()', (data) => {
             expect(data).toBeTruthy();
         });

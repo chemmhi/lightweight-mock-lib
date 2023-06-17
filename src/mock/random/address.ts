@@ -7,33 +7,33 @@ export interface AddressInterface {
     city: (prefix?: boolean) => string;
     county: (prefix?: boolean) => string;
     zip: (len?: number) => string;
-    pick: <T>(arr: T[]) => T;
+    _pick: <T>(arr: T[]) => T;
     _natural: (min: number, max: number) => number;
 }
 
 const Address: AddressInterface = {
     // 随机生成一个大区。
     region() {
-        return this.pick(REGION);
+        return this._pick(REGION);
     },
 
     // 随机生成一个（中国）省（或直辖市、自治区、特别行政区）。
     province() {
-        return this.pick(DICT).name;
+        return this._pick(DICT).name;
     },
 
     // 随机生成一个（中国）市。
     city(prefix?: boolean) {
-        const province = this.pick(DICT);
-        const city = this.pick(province.children as DictItem[]);
+        const province = this._pick(DICT);
+        const city = this._pick(province.children as DictItem[]);
         return prefix ? [province.name, city.name].join(" ") : city.name;
     },
 
     // 随机生成一个（中国）县。
     county(prefix?: boolean) {
-        const province = this.pick(DICT);
-        const city = this.pick(province.children as DictItem[]);
-        const county = this.pick(city.children as DictItem[]) || {
+        const province = this._pick(DICT);
+        const city = this._pick(province.children as DictItem[]);
+        const county = this._pick(city.children as DictItem[]) || {
             name: "-",
         };
         return prefix
@@ -49,7 +49,7 @@ const Address: AddressInterface = {
     },
 
     // 从数组中随机选取一个元素，并返回。
-    pick<T>(arr: T[]): T {
+    _pick<T>(arr: T[]): T {
         return arr[this._natural(0, arr.length - 1)] as T;
     },
 
