@@ -19,6 +19,30 @@ describe('Random', () => {
             expect(typeof data).toBe('boolean')
         })
 
+        doit('Random.boolean(10)', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
+        doit('Random.boolean(10, 90, true)', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
+        doit('Random.boolean(10, 90)', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
+        doit('Random.bool()', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
+        doit('Random.bool(10, 90, true)', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
+        doit('Random.bool(10, 90)', function (data) {
+            expect(typeof data).toBe('boolean')
+        })
+
         doit('Random.natural()', (data) => {
             expect(typeof data).toBe('number');
             expect(data).toBeGreaterThanOrEqual(0);
@@ -37,6 +61,12 @@ describe('Random', () => {
         });
 
         doit('Random.integer()', (data) => {
+            expect(typeof data).toBe('number');
+            expect(data).toBeGreaterThanOrEqual(-9007199254740992);
+            expect(data).toBeLessThanOrEqual(9007199254740992);
+        });
+
+        doit('Random.int()', (data) => {
             expect(typeof data).toBe('number');
             expect(data).toBeGreaterThanOrEqual(-9007199254740992);
             expect(data).toBeLessThanOrEqual(9007199254740992);
@@ -136,6 +166,16 @@ describe('Random', () => {
             expect(typeof data).toBe('string')
             expect(data.length).toBeGreaterThanOrEqual(3)
             expect(data.length).toBeLessThanOrEqual(7)
+        })
+
+        doit('Random.str("aeiou", 3, 7)', (data) => {
+            expect(typeof data).toBe('string')
+            expect(data.length).toBeGreaterThanOrEqual(3)
+            expect(data.length).toBeLessThanOrEqual(7)
+        })
+
+        doit('Random.char("abc")', (data) => {
+            expect(typeof data).toBe('string')
         })
 
         doit('Random.string(5)', (data) => {

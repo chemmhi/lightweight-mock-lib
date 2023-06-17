@@ -27,7 +27,7 @@ export interface Basics {
 
 const basics: Basics = {
   // 返回一个随机的布尔值。
-  boolean(min?: number, max?: number, cur = false): boolean {
+  boolean(min?: number, max?: number, cur?: boolean): boolean {
     if (cur !== undefined) {
       min = typeof min !== 'undefined' && !isNaN(min) ? parseInt(min + '', 10) : 1;
       max = typeof max !== 'undefined' && !isNaN(max) ? parseInt(max + '', 10) : 1;

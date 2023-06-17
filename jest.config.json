@@ -5,6 +5,6 @@
   "testRegex": "./*/*.test.(ts|js)",
   "testEnvironment": "node",
   "moduleFileExtensions": ["ts", "js"],
-  "collectCoverageFrom": ["src/mock/random/*"]
-    
+  "collectCoverageFrom": ["src/mock/random/*"],
+  "coveragePathIgnorePatterns": ["src/mock/random/misc.ts"]
 }
