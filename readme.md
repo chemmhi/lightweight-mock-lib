@@ -783,6 +783,29 @@ console.log(ip); // 输出一个随机的 IP 地址
 
 #### `Mock.mock()`
 
+
+### 根据模板生成随机数据
+
+`mock` 函数支持Random的全部方法，具体用法为：
+
+```javascript
+import Mock from 'lightweight-mock-lib'
+const { Random } = Mock;
+
+
+// 1. 生成随机自然数
+console.log(Random.integer())   // 使用Random
+
+console.log(Mock.mock('@integer()'))  // 使用mock
+console.log(Mock.mock('@integer'))  // 如果没有传参，则括号可省略
+
+
+console.log(Random.integer(10, 20))   // (10, 20) 之间的自然数
+console.log(Mock.mock('@integer(10, 20)'))  // 使用mock
+
+
+```
+
 ```javascript
 import Mock from 'lightweight-mock-lib'
 
