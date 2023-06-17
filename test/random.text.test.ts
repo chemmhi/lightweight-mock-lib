@@ -77,5 +77,53 @@ describe('Random', () => {
             expect(words.length).toBeGreaterThanOrEqual(3);
             expect(words.length).toBeLessThanOrEqual(5);
         });
+        doit('Random.cparagraph()', (data) => {
+            expect(data.split('.').length - 1).toBeGreaterThanOrEqual(3);
+            expect(data.split('.').length - 1).toBeLessThanOrEqual(7);
+        });
+        doit('Random.cparagraph(2)', (data) => {
+            expect(data.split('.').length - 1).toEqual(2);
+        });
+        doit('Random.cparagraph(1, 3)', (data) => {
+            expect(data.split('.').length - 1).toBeGreaterThanOrEqual(1);
+            expect(data.split('.').length - 1).toBeLessThanOrEqual(3);
+        });
+
+        doit('Random.csentence()', (data) => {
+            expect(data[0]).toEqual(data.toUpperCase()[0]);
+            expect(data.split(' ').length).toBeGreaterThanOrEqual(12);
+            expect(data.split(' ').length).toBeLessThanOrEqual(18);
+        });
+        doit('Random.csentence(4)', (data) => {
+            expect(data.length).toEqual(4);
+        });
+        doit('Random.csentence(3, 5)', (data) => {
+            expect(data.length).toBeGreaterThanOrEqual(3);
+            expect(data.length).toBeLessThanOrEqual(5);
+        });
+
+        doit('Random.cword()', (data) => {
+            expect(data.length).toBeGreaterThanOrEqual(3);
+            expect(data.length).toBeLessThanOrEqual(10);
+        });
+        doit('Random.cword(4)', (data) => {
+            expect(data.length).toEqual(4);
+        });
+        doit('Random.cword(3, 5)', (data) => {
+            expect(data.length).toBeGreaterThanOrEqual(3);
+            expect(data.length).toBeLessThanOrEqual(5);
+        });
+
+        doit('Random.ctitle()', (data) => {
+            expect(data.length).toBeGreaterThanOrEqual(3);
+            expect(data.length).toBeLessThanOrEqual(7);
+        });
+        doit('Random.ctitle(4)', (data) => {
+            expect(data.length).toEqual(4);
+        });
+        doit('Random.ctitle(3, 5)', (data) => {
+            expect(data.length).toBeGreaterThanOrEqual(3);
+            expect(data.length).toBeLessThanOrEqual(5);
+        });
     });
 })

@@ -4,5 +4,7 @@
   },
   "testRegex": "./*/*.test.(ts|js)",
   "testEnvironment": "node",
-  "moduleFileExtensions": ["ts", "js"]
+  "moduleFileExtensions": ["ts", "js"],
+  "collectCoverageFrom": ["src/mock/random/*"]
+    
 }

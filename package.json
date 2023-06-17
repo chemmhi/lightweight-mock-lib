@@ -29,6 +29,7 @@
     "lint": "xo --quiet",
     "precommit": "lint-staged",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
   },
   "devDependencies": {
