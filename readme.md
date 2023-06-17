@@ -770,3 +770,31 @@ const ip = Random.ip();
 console.log(ip); // 输出一个随机的 IP 地址
 
 ```
+
+### 函数名称
+
+`mock`
+
+### 函数说明
+
+`mock` 根据模板生成数据。
+
+### 函数列表
+
+#### `Mock.mock()`
+
+```javascript
+import Mock from 'lightweight-mock-lib'
+
+console.log(Mock.mock({
+    cname: '@cname', // 中文名
+    name: '@name',   // 英文名
+    age: '@integer(20, 30)',   // 自然数
+    region: '@region',     // 地区
+    'gender|1': ['男', '女'],
+    friends: {
+        name: '@name',
+        'isStudent|1': [true, false],
+    }
+}))
+```
