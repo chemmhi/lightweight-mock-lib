@@ -821,3 +821,25 @@ console.log(Mock.mock({
     }
 }))
 ```
+
+### 函数列表
+
+#### `Mock.register()`
+
+#### 注册自定义的mock方法
+
+```javascript
+
+// 1. 注册
+Mock.register((mock) => {
+    mock.even = (min, max) => {
+        return mock.Random.pick(Random.range(min,max, 2))
+    };
+})
+
+// 2. 使用
+console.log(Mock.even(2, 10))  // 输出6
+
+
+```
+
