@@ -12,7 +12,7 @@
 
 `Random` 是一个用于生成随机数据的函数库。
 
-### 函数列表
+### 地区、地址类函数列表
 
 生成地区、地址类随机数据
 
@@ -61,7 +61,7 @@ console.log(Random.zip()); // 123456
 
 ```
 
-### 函数列表
+### 基础类型函数列表
 
 #### `Random.boolean()`
 
@@ -254,7 +254,7 @@ console.log(Random.zip()); // 123456
 - `step`：生成的步长。
 
 
-### 函数列表
+### 时间日期类函数列表
 时间，日期类
 
 #### `Random.date()`
@@ -294,7 +294,7 @@ console.log(Random.zip()); // 123456
 - `unit`：时间单位，可选值为 `year、month、day、hour、minute、second、week`。
 
 
-### 函数列表
+### 工具函数列表
 
 
 #### `Random.capitalize()`
@@ -675,7 +675,7 @@ const sentenceWithRange = Random.sentence(3, 5);
 console
 ```
 
-### 函数列表
+
 
 #### `Random.url()`
 
@@ -771,20 +771,15 @@ console.log(ip); // 输出一个随机的 IP 地址
 
 ```
 
-### 函数名称
-
-`mock`
-
-### 函数说明
+### 
 
 `mock` 根据模板生成数据。
 
-### 函数列表
+### 根据模板生成随机数据
 
 #### `Mock.mock()`
 
 
-### 根据模板生成随机数据
 
 `mock` 函数支持Random的全部方法，具体用法为：
 
@@ -822,11 +817,11 @@ console.log(Mock.mock({
 }))
 ```
 
-### 函数列表
+### 注册自定义的mock方法
 
 #### `Mock.register()`
 
-#### 注册自定义的mock方法
+
 
 ```javascript
 
